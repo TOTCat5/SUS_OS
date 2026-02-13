@@ -1,6 +1,7 @@
 [BITS 32]
 org 0x10000
 
+; code
 start:
 
     cli
@@ -22,14 +23,24 @@ OS_Hang:
 
 %include "renderingVGA.s"
 
-helloWorld: db "HelloWorld",0
-
 OS_Begin:
     cli
     call clearScreenOS
     mov eax,helloWorld
-    call printStringOS
-    jmp OS_Hang
+    call printC_StringOS
+    
+    ; mov bx,[cursorPos]
+    ; call setCursorPos
 
 
-times ((0x10*512)-($$-$)) nop
+    OS_Loop:
+
+    jmp OS_Loop
+
+
+; variables
+helloWorld: db "Hello World !",0
+
+cursorPos: dw 0
+
+times ((0x10*512)-($$-$)) db 0 ; padding
