@@ -3,7 +3,7 @@ VGA_TerminalBuffer: dd 0xb8000
 
 
 ; string arg in eax
-; modifies eax and bx
+; modifies eax,edx and bl
 printC_StringOS:
 
     mov edx,[VGA_TerminalBuffer]
@@ -27,20 +27,21 @@ printC_StringOS:
         call setCursorPos
         ret
 
-; take eax as the string and ebx as its size
-; modify cl,edx and ebx
+; take eax as the string and ebx as its size in characters
+; modify cl,edx,eax and ebx
 printStringOS:
     mov edx, [cursorPos]
+    shl edx,1
     add edx, [VGA_TerminalBuffer]
+    shl ebx,1
     add ebx, [VGA_TerminalBuffer]   ; Transform size into pointer
 
     .next:
-    mov cl,[eax]                    ; Load the character 
-    cmp ebx,eax                     ; check if reached end pointer
+    cmp ebx,edx                     ; check if reached end pointer
     je .done
 
     mov cl,[eax]                    ; get character
-    mov byte [edx+1], cl            ; load on the screen the character
+    mov byte [edx], cl              ; load on the screen the character
     mov byte [edx+1], 15
 
     add edx,2                       ; increment stuff

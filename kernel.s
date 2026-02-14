@@ -17,15 +17,14 @@ start:
 
     jmp OS_Begin
 
-OS_Hang:
-    jmp OS_Hang
-
 
 %include "renderingVGA.s"
 
 OS_Begin:
     cli
     call clearScreenOS
+    mov eax,helloWorld
+    call printC_StringOS
     mov eax,helloWorld
     call printC_StringOS
     

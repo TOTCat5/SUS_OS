@@ -78,6 +78,11 @@ disk_error:
     mov si,diskErrorMsg
     call printStringReal
 
+    mov ah, 86h
+    mov cx, 0x000F      ; high word
+    mov dx, 0x4240      ; low word
+    int 15h
+
     hlt
 
 printStringReal:
