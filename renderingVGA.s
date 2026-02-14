@@ -1,12 +1,13 @@
 
-VGA_TerminalBuffer: dd 0xb8000
+%define VGA_TerminalBuffer 0xb8000
 
 
 ; string arg in eax
 ; modifies eax,edx and bl
 printC_StringOS:
 
-    mov edx,[VGA_TerminalBuffer]
+    mov edx,VGA_TerminalBuffer
+    add edx,[cursorPos]
     add edx,[cursorPos]
 
     .next:
@@ -32,9 +33,9 @@ printC_StringOS:
 printStringOS:
     mov edx, [cursorPos]
     shl edx,1
-    add edx, [VGA_TerminalBuffer]
+    add edx, VGA_TerminalBuffer
     shl ebx,1
-    add ebx, [VGA_TerminalBuffer]   ; Transform size into pointer
+    add ebx, VGA_TerminalBuffer     ; Transform size into pointer
 
     .next:
     cmp ebx,edx                     ; check if reached end pointer
@@ -55,19 +56,15 @@ printStringOS:
         call setCursorPos
         ret
 
-; set edi to 4000-4002
+
+; modifies eax,and possibly edi and ecx... I used chatGPT for that one,forgive me
 clearScreenOS:
+    xor eax, eax
+    mov edi, VGA_TerminalBuffer
+    mov ecx, 4000/4
+    rep stosd
+    ret
 
-    xor edi,edi
-    .next:
-        mov byte [edi+0xb8000],    0x20
-        mov byte [edi+1+0xb8000], 0x0f
-
-        add edi,2
-        cmp edi,4000
-    jl .next
-
-ret
 
 
 ; use bx as input
@@ -88,4 +85,4 @@ setCursorPos:
 	inc dl
 	mov al, bh
 	out dx, al
-ret
+    ret
