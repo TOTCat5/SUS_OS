@@ -3,7 +3,6 @@ org 0x10000
 
 ; code
 start:
-
     cli
     mov ax, 0x10
     mov ds, ax
@@ -21,25 +20,22 @@ start:
 %include "renderingVGA.s"
 
 OS_Begin:
-    cli
     call clearScreenOS
-    mov eax,helloWorld
+
+    mov eax,successMsg
     call printC_StringOS
-    mov eax,helloWorld
-    call printC_StringOS
-    
-    ; mov bx,[cursorPos]
-    ; call setCursorPos
 
 
     OS_Loop:
-
-    jmp OS_Loop
+        hlt
+        jmp OS_Loop
 
 
 ; variables
-helloWorld: db "Hello World !",0
+helloWorld: db "Hello World ! ",0
 
 cursorPos: dw 0
+
+successMsg: db "OS Loaded !",0
 
 times ((0x10*512)-($$-$)) db 0 ; padding

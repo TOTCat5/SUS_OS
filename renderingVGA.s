@@ -1,22 +1,26 @@
 
 %define VGA_TerminalBuffer 0xb8000
-
+%define VGA_TerminalSizeX 80
+%define VGA_TerminalSizeY 25
+%define VGA_TerminalArea 2000
+%define VGA_TerminalBufferSize 4000
+%define VGA_ColorWhiteOnBlack 15
 
 ; string arg in eax
-; modifies eax,edx and bl
+; modifies eax,edx and bx
 printC_StringOS:
+    movzx edx, word [cursorPos]
+    shl edx,1
+    add edx,VGA_TerminalBuffer
 
-    mov edx,VGA_TerminalBuffer
-    add edx,[cursorPos]
-    add edx,[cursorPos]
+    mov bh,VGA_ColorWhiteOnBlack
 
     .next:
     mov bl,[eax]                                    ; Load the character
     cmp bl,0                                        ; Check for '\0'
     je .done
 
-    mov byte [edx], bl                              ; load on the screen the character
-    mov byte [edx+1], 15
+    mov word [edx],bx                               ; load on the screen the character
 
     add edx,2                                       ; go to next character
     inc word [cursorPos]
@@ -29,25 +33,27 @@ printC_StringOS:
         ret
 
 ; take eax as the string and ebx as its size in characters
-; modify cl,edx,eax and ebx
+; modify cx,edx,eax and ebx
 printStringOS:
-    mov edx, [cursorPos]
+    movzx edx, word[cursorPos]
     shl edx,1
-    add edx, VGA_TerminalBuffer
+    add edx,VGA_TerminalBuffer
     shl ebx,1
-    add ebx, VGA_TerminalBuffer     ; Transform size into pointer
+    add ebx,VGA_TerminalBuffer      ; Transform size into pointer
+
+    mov ch,VGA_ColorWhiteOnBlack
 
     .next:
-    cmp ebx,edx                     ; check if reached end pointer
-    je .done
+    test ecx,ecx                    ; check if reached end pointer
+    jz .done
 
     mov cl,[eax]                    ; get character
-    mov byte [edx], cl              ; load on the screen the character
-    mov byte [edx+1], 15
+    mov word [edx],cx
 
     add edx,2                       ; increment stuff
-    inc word [cursorPos]
     inc eax
+    inc word [cursorPos]
+    dec ecx
     jmp .next
 
     .done:
@@ -57,12 +63,14 @@ printStringOS:
         ret
 
 
-; modifies eax,and possibly edi and ecx... I used chatGPT for that one,forgive me
+; modifies eax, edi and ecx
 clearScreenOS:
-    xor eax, eax
-    mov edi, VGA_TerminalBuffer
-    mov ecx, 4000/4
-    rep stosd
+    mov ax,0x0f20              ; ' ' + white on black
+    mov edi,VGA_TerminalBuffer
+    mov ecx,VGA_TerminalArea
+    rep stosw
+
+    mov word [cursorPos], 0
     ret
 
 

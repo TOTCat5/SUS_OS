@@ -4,6 +4,7 @@
 start:
     cli
 
+    ;Keep DL before changing it
     xor ax, ax
     mov es, ax
     mov ss, ax
@@ -11,6 +12,9 @@ start:
     mov sp, 0x7C00
     mov [bootDrive], dl
 
+
+
+    ; Load other sectors in Memory to run the kernel
     mov ax, 0x1000
     mov es, ax          ; segment → physical 0x10000
     mov ah, 0x02        ; BIOS read sectors
@@ -23,8 +27,8 @@ start:
     int 0x13
     jc disk_error       ; optional: jump if error
 
-    mov si, successMsg
-    call printStringReal
+    ; mov si, successMsg
+    ; call printStringReal
 
     cli
     
@@ -43,6 +47,8 @@ diskErrorMsg: db "There was an error while reading from the disk !",0
 bootDrive: db 0
 
 successMsg: db "Disk read success!", 10,13,0
+
+
 
 gdt_start:
 
