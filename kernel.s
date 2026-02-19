@@ -22,8 +22,9 @@ start:
 OS_Begin:
     call clearScreenOS
 
-    mov eax,successMsg
-    call printC_StringOS
+    mov esi,successMsg
+    mov ecx,11
+    call printStringOS
 
 
     OS_Loop:
@@ -32,10 +33,12 @@ OS_Begin:
 
 
 ; variables
-helloWorld: db "Hello World ! ",0
+helloWorld: db "Hello World ! ",
 
-cursorPos: dw 0
+cursorPos: dd 0
 
 successMsg: db "OS Loaded !",0
+
+logoMsg: db ""
 
 times ((0x10*512)-($$-$)) db 0 ; padding
