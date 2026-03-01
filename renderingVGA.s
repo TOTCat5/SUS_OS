@@ -63,9 +63,10 @@ printC_StringOS:
     add edi,VGA_TerminalBuffer
 
     .next:
-        test esi,esi
-        jz .done
         mov al,[esi]
+        test al,al
+        jz .done
+
         mov [edi],al
         mov byte [edi+1],VGA_ColorWhiteOnBlack
 
@@ -78,16 +79,19 @@ printC_StringOS:
         ret
 
 
-; modifies edi
+; modifies ecx,eax,edx and bx
 endLineOS:
-    mov dword edi,[cursorPos]
-    add edi,VGA_TerminalSizeX
-    dec edi
-    div edi,VGA_TerminalSizeX ; do a ceil division or edi=(edi+Terminal_SizeX-1)/Terminal_SizeX
-    mul edi,VGA_TerminalSizeX ; then gives back the ceiled cursorPos or the next line
-    mov dword [cursorPos],edi
+    mov eax,[cursorPos]
+    xor edx,edx
+    mov ecx,VGA_TerminalSizeX
+    div ecx              ; eax=cursorPos/80
 
-    mov word bx,[cursorPos]
+    inc eax              ; next line
+    mul ecx              ; eax=eax*80
+
+    mov [cursorPos],eax
+
+    mov bx,ax
     call setCursorPos
     ret
 
