@@ -25,8 +25,20 @@ OS_Begin:
     mov esi,successMsg
     mov ecx,11
     call printStringOS
-    
     call endLineOS
+    mov esi,LogoInLines.line0
+    call printC_StringOS
+    call endLineOS
+    mov esi,LogoInLines.line1
+    call printC_StringOS
+    call endLineOS
+    mov esi,LogoInLines.line2
+    call printC_StringOS
+    call endLineOS
+    mov esi,LogoInLines.line3
+    call printC_StringOS
+    call endLineOS
+
 
     OS_Loop:
         hlt
@@ -39,6 +51,12 @@ helloWorld: db "Hello World ! ",
 cursorPos: dd 0
 
 successMsg: db "OS Loaded !",0
+
+LogoInLines:
+    .line0: db " ____ _  _  _____      ___   ____",0
+    .line1: db "/ __/| || |/ ___/     / _ \ / __/",0
+    .line2: db "\___\| || |\____\    | |_| |\___\",0
+    .line3: db "\___/\____/\____/=====\___/ \___/",0
 
 logoMsg: db ""
 

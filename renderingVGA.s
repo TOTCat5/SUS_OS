@@ -72,6 +72,7 @@ printC_StringOS:
 
         add edi,2
         inc esi
+        inc dword [cursorPos]
         jmp .next
     .done:
         mov word bx,[cursorPos]
@@ -102,7 +103,8 @@ clearScreenOS:
     mov ecx,VGA_TerminalArea/4
     rep stosd
 
-    mov dword [cursorPos], 0
+    xor ebx,ebx
+    mov dword [cursorPos],ebx
     call setCursorPos
     ret
 
