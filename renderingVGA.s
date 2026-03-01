@@ -78,9 +78,22 @@ printC_StringOS:
         ret
 
 
+; modifies edi
+endLineOS:
+    mov dword edi,[cursorPos]
+    add edi,VGA_TerminalSizeX
+    dec edi
+    div edi,VGA_TerminalSizeX ; do a ceil division or edi=(edi+Terminal_SizeX-1)/Terminal_SizeX
+    mul edi,VGA_TerminalSizeX ; then gives back the ceiled cursorPos or the next line
+    mov dword [cursorPos],edi
+
+    mov word bx,[cursorPos]
+    call setCursorPos
+    ret
+
 ; modifies eax, edi and ecx
 clearScreenOS:
-    mov eax,0x0f200f20          ; ' ' + white on black
+    mov eax,0x0f200f20          ; 2x ' ' + white on black
     mov edi,VGA_TerminalBuffer
     mov ecx,VGA_TerminalArea/4
     rep stosd

@@ -25,7 +25,8 @@ OS_Begin:
     mov esi,successMsg
     mov ecx,11
     call printStringOS
-
+    
+    call endLineOS
 
     OS_Loop:
         hlt
