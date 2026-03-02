@@ -57,32 +57,40 @@ OS_Begin:
             test edx, SSE_Available
             jz .noSSE
             mov esi,SSE_Msg.SSE_Available
+            pushad
             call printC_StringOS
             call endLineOS
+            popad
         .noSSE:
 
         ; ---- SSE2 ----
             test edx, SSE2_Available
             jz .noSSE2
             mov esi,SSE_Msg.SSE2_Available
+            pushad
             call printC_StringOS
             call endLineOS
+            popad
         .noSSE2:
 
         ; ---- SSE3 ----
             test ecx, SSE3_Available
             jz .noSSE3
             mov esi,SSE_Msg.SSE3_Available
+            pushad
             call printC_StringOS
             call endLineOS
+            popad
         .noSSE3:
 
         ; ---- SSSE3 ----
             test ecx, SSSE3_Available
             jz .noSSSE3
             mov esi,SSSE3_AvailableMsg
+            pushad
             call printC_StringOS
             call endLineOS
+            popad
         .noSSSE3:
     checkEnd:
 
