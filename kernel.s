@@ -56,7 +56,7 @@ OS_Begin:
         ; ---- SSE ----
             test edx, SSE_Available
             je .noSSE
-            mov esi,SSE_Msg._Available
+            mov esi,SSE_Msg.SSE_Available
             call printC_StringOS
             call endLineOS
         .noSSE:
@@ -64,7 +64,7 @@ OS_Begin:
         ; ---- SSE2 ----
             test edx, SSE2_Available
             je .noSSE2
-            mov esi,SSE_Msg._2Available
+            mov esi,SSE_Msg.SSE2_Available
             call printC_StringOS
             call endLineOS
         .noSSE2:
@@ -72,7 +72,7 @@ OS_Begin:
         ; ---- SSE3 ----
             test ecx, SSE3_Available
             je .noSSE3
-            mov esi,SSE_Msg._3Available
+            mov esi,SSE_Msg.SSE3_Available
             call printC_StringOS
             call endLineOS
         .noSSE3:
@@ -114,11 +114,11 @@ logoMsg: db ""
 SIMD_Check: db "Available Extensions:",0
 
 SSE_Msg:
-    ._Available: db "    -SSE",0
-    ._2Available: db "    -SSE2",0
-    ._3Available: db "    -SSE3",0
-    ._4v1_Available: db "    -SSE4.1",0
-    ._4v2_Available: db "    -SSE4.2",0
+    .SSE_Available: db "    -SSE",0
+    .SSE2_Available: db "    -SSE2",0
+    .SSE3_Available: db "    -SSE3",0
+    .SSE4v1_Available: db "    -SSE4.1",0
+    .SSE4v2_Available: db "    -SSE4.2",0
 SSSE3_AvailableMsg: db "    -SSSE3",0
 
 
