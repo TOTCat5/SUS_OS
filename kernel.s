@@ -55,7 +55,7 @@ OS_Begin:
 
         ; ---- SSE ----
             test edx, SSE_Available
-            je .noSSE
+            jne .noSSE
             mov esi,SSE_Msg.SSE_Available
             call printC_StringOS
             call endLineOS
@@ -63,7 +63,7 @@ OS_Begin:
 
         ; ---- SSE2 ----
             test edx, SSE2_Available
-            je .noSSE2
+            jne .noSSE2
             mov esi,SSE_Msg.SSE2_Available
             call printC_StringOS
             call endLineOS
@@ -71,7 +71,7 @@ OS_Begin:
 
         ; ---- SSE3 ----
             test ecx, SSE3_Available
-            je .noSSE3
+            jne .noSSE3
             mov esi,SSE_Msg.SSE3_Available
             call printC_StringOS
             call endLineOS
@@ -79,7 +79,7 @@ OS_Begin:
 
         ; ---- SSSE3 ----
             test ecx, SSSE3_Available
-            je .noSSSE3
+            jne .noSSSE3
             mov esi,SSSE3_AvailableMsg
             call printC_StringOS
             call endLineOS
