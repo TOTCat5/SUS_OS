@@ -19,6 +19,10 @@ start:
 
 %include "renderingVGA.s"
 
+%include "interruptHandling.s"
+
+%include "SIMD.s"
+
 OS_Begin:
     call clearScreenOS
 
@@ -39,10 +43,57 @@ OS_Begin:
     call printC_StringOS
     call endLineOS
 
+    call endLineOS
 
-    OS_Loop:
-        hlt
-        jmp OS_Loop
+    mov esi,SIMD_Check
+    call printC_StringOS
+    call endLineOS
+
+    CheckingSIMD_Extensions:
+        mov eax,0x1
+        cpuid
+
+        ; ---- SSE ----
+            test edx, SSE_Available
+            je .noSSE
+            mov esi,SSE_Msg._Available
+            call printC_StringOS
+            call endLineOS
+        .noSSE:
+
+        ; ---- SSE2 ----
+            test edx, SSE2_Available
+            je .noSSE2
+            mov esi,SSE_Msg._2Available
+            call printC_StringOS
+            call endLineOS
+        .noSSE2:
+
+        ; ---- SSE3 ----
+            test ecx, SSE3_Available
+            je .noSSE3
+            mov esi,SSE_Msg._3Available
+            call printC_StringOS
+            call endLineOS
+        .noSSE3:
+
+        ; ---- SSSE3 ----
+            test ecx, SSSE3_Available
+            je .noSSSE3
+            mov esi,SSSE3_AvailableMsg
+            call printC_StringOS
+            call endLineOS
+        .noSSSE3:
+    checkEnd:
+
+    
+    
+
+    jmp $
+
+    ; OS_Loop:
+    ;     hlt
+    ;     jmp OS_Loop
 
 
 ; variables
@@ -59,5 +110,19 @@ LogoInLines:
     .line3: db "\___/\____/\____/=====\___/ \___/",0
 
 logoMsg: db ""
+
+SIMD_Check: db "Available Extensions:",0
+
+SSE_Msg:
+    ._Available: db "    -SSE",0
+    ._2Available: db "    -SSE2",0
+    ._3Available: db "    -SSE3",0
+    ._4v1_Available: db "    -SSE4.1",0
+    ._4v2_Available: db "    -SSE4.2",0
+SSSE3_AvailableMsg: db "    -SSSE3",0
+
+
+
+
 
 times ((0x10*512)-($$-$)) db 0 ; padding
