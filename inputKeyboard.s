@@ -1,7 +1,7 @@
 
 handlePS2KeyboardInt:
-    
-    in al,60h
+
+    mov al,"O"
 
     mov byte [cursorPos],al
 
