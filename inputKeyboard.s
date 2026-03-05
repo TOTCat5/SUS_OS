@@ -1,10 +1,9 @@
 
-debugMsg: db "an Keyboard interrupt happened",0
-
 handlePS2KeyboardInt:
-    mov esi,debugMsg
-    call printC_StringOS
-    call carryReturnLineOS
+    
+    in al,60h
+
+    mov byte [cursorPos],al
 
     ret
     

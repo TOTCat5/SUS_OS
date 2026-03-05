@@ -29,6 +29,8 @@ exceptionHandler:
     hlt
     jmp .halt
 
+    ret
+
 
 %define PIC1_Port 0x20
 %define PIC1_Data (PIC1_Port+1)
@@ -45,14 +47,14 @@ exceptionHandler:
 
 %macro isr_err_stub 1
 isr_stub_%+%1:
-    jmp exceptionHandler
+    call exceptionHandler
     add esp,4
     iret
 %endmacro
 
 %macro isr_no_err_stub 1
 isr_stub_%+%1:
-    jmp exceptionHandler
+    call exceptionHandler
     iret
 %endmacro
 
@@ -92,7 +94,10 @@ isr_stub_%+%1:
     isr_err_stub    30
     isr_no_err_stub 31
     isr_stub_32:
-        iret
+        pushad
+        acknowledgePIC PIC1_Port
+        popad
+    iret
     ; keyboard interrupt
     isr_stub_33:
         pushad
@@ -159,6 +164,7 @@ initPIC:
     outb 0x21, 0xFC
     outb 0xA1, 0xFF
 
+    ret
 
 
 

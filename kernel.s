@@ -121,7 +121,7 @@ OS_Begin:
     call initInterruptHandling
 
     println finishInterruptHandling
-    
+
 
     OS_Loop:
         hlt
