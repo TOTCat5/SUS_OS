@@ -2,8 +2,9 @@
 %define VGA_TerminalBuffer 0xb8000
 %define VGA_TerminalSizeX 80
 %define VGA_TerminalSizeY 25
-%define VGA_TerminalArea 2000
-%define VGA_TerminalBufferSize 4000
+%define VGA_TerminalArea (VGA_TerminalSizeX*VGA_TerminalSizeY)
+%define VGA_TerminalBufferSize (VGA_TerminalArea*2)
+%define VGA_TerminalEndBuffer (0xb8000+VGA_TerminalBufferSize)
 %define VGA_ColorWhiteOnBlack 15
 
 
@@ -96,6 +97,19 @@ endLineOS:
     call setCursorPos
     ret
 
+carryReturnLineOS:
+    mov eax,[cursorPos]
+    xor edx,edx
+    mov ecx,VGA_TerminalSizeX
+    div ecx              ; eax=cursorPos/80
+    mul ecx              ; eax=eax*80
+
+    mov [cursorPos],eax
+
+    mov bx,ax
+    call setCursorPos
+    ret
+
 ; modifies eax, edi and ecx
 clearScreenOS:
     mov eax,0x0f200f20          ; 2x ' ' + white on black
@@ -108,4 +122,7 @@ clearScreenOS:
     call setCursorPos
     ret
 
+scrollScreen:
+    
+    ret
 

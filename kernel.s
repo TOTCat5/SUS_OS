@@ -23,6 +23,12 @@ start:
 
 %include "SIMD.s"
 
+%macro println 1
+    mov esi,%+%1
+    call printC_StringOS
+    call endLineOS
+%endmacro
+
 OS_Begin:
     call clearScreenOS
 
@@ -56,56 +62,76 @@ OS_Begin:
         ; ---- SSE ----
             test edx, SSE_Available
             jz .noSSE
-            mov esi,SSE_Msg.SSE_Available
             pushad
-            call printC_StringOS
-            call endLineOS
+            println SSE_Msg.SSE_Available
+            
             popad
         .noSSE:
 
         ; ---- SSE2 ----
             test edx, SSE2_Available
             jz .noSSE2
-            mov esi,SSE_Msg.SSE2_Available
             pushad
-            call printC_StringOS
-            call endLineOS
+            println SSE_Msg.SSE2_Available
+            
             popad
         .noSSE2:
 
         ; ---- SSE3 ----
             test ecx, SSE3_Available
             jz .noSSE3
-            mov esi,SSE_Msg.SSE3_Available
             pushad
-            call printC_StringOS
-            call endLineOS
+            println SSE_Msg.SSE3_Available
+            
             popad
         .noSSE3:
 
         ; ---- SSSE3 ----
             test ecx, SSSE3_Available
             jz .noSSSE3
-            mov esi,SSSE3_AvailableMsg
             pushad
-            call printC_StringOS
-            call endLineOS
+            println SSE_Msg.SSSE3_Available
+            
             popad
         .noSSSE3:
+
+        ; ---- SSE4.1 ----
+            test ecx, SSE4v1_Available
+            jz .noSSE4v1
+            pushad
+            println SSE_Msg.SSE4v1_Available
+            
+            popad
+        .noSSE4v1:
+
+        ; ---- SSE4.2 ----
+            test ecx, SSE4v2_Available
+            jz .noSSE4v2
+            pushad
+            println SSE_Msg.SSE4v2_Available
+            
+            popad
+        .noSSE4v2:
+
     checkEnd:
 
-    
+
+    println initInterruptHandlingMsg
+
+    call initInterruptHandling
+
+    println finishInterruptHandling
     
 
-    jmp $
+    OS_Loop:
+        hlt
 
-    ; OS_Loop:
-    ;     hlt
-    ;     jmp OS_Loop
+        jmp OS_Loop
 
 
 ; variables
-helloWorld: db "Hello World ! ",
+
+helloWorld: db "Hello World ! ",0
 
 cursorPos: dd 0
 
@@ -119,15 +145,17 @@ LogoInLines:
 
 logoMsg: db ""
 
-SIMD_Check: db "Available Extensions:",0
+initInterruptHandlingMsg: db "Initializing The Interrupt Handling",0
+finishInterruptHandling: db "Finishing The Interrupt Handling",0
 
+SIMD_Check: db "Available Extensions:",0
 SSE_Msg:
     .SSE_Available: db "    -SSE",0
     .SSE2_Available: db "    -SSE2",0
     .SSE3_Available: db "    -SSE3",0
+    .SSSE3_Available: db "    -SSSE3",0
     .SSE4v1_Available: db "    -SSE4.1",0
     .SSE4v2_Available: db "    -SSE4.2",0
-SSSE3_AvailableMsg: db "    -SSSE3",0
 
 
 
