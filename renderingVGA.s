@@ -35,7 +35,7 @@ setCursorPos:
 ; modifies edi,esi,al and ecx
 printStringOS:
     mov dword edi,[cursorPos]
-    shl edi,1
+    add edi,edx
     add edi,VGA_TerminalBuffer
 
     add dword [cursorPos],ecx
@@ -60,7 +60,7 @@ printStringOS:
 ; modifies esi,edi and al
 printC_StringOS:
     mov dword edi,[cursorPos]
-    shl edi,1
+    add edi,edi
     add edi,VGA_TerminalBuffer
 
     .next:

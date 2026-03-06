@@ -1,4 +1,14 @@
 
+%macro outb 2
+    mov dx,%1
+    mov al,%2
+    out dx,al
+%endmacro
+%macro inb 2
+    mov dx,%1
+    in %2,dx
+%endmacro
+
 struc idt_entry_t
     .isr_low: resw 1
     .kernel_cs: resw 1
@@ -19,10 +29,10 @@ idt: resb idt_entry_t_size*256
 
 align 0x1
 
+
+exceptionMsg: db "an exception happened",0
 exceptionHandler:
-    exceptionMsg: db "an exception happened",0
-    mov esi,exceptionMsg
-    call printC_StringOS
+    println exceptionMsg
 
     .halt:
     cli
@@ -136,12 +146,7 @@ idtSetDescriptor:
     ret
 
 
-%macro outb 2
-    mov dx,%1
-    mov al,%2
-    out dx,al
 
-%endmacro
 
 
 ; PIC for Programmable Interrupt Controller... I... Okay

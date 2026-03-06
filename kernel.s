@@ -16,6 +16,11 @@ start:
 
     jmp OS_Begin
 
+%macro println 1
+    mov esi,%1
+    call printC_StringOS
+    call endLineOS
+%endmacro
 
 %include "renderingVGA.s"
 
@@ -23,98 +28,44 @@ start:
 
 %include "SIMD.s"
 
-%macro println 1
-    mov esi,%+%1
-    call printC_StringOS
-    call endLineOS
+
+
+%macro checkSSE_Extension 2
+    test %2, %1%+_Available
+            jz .no%+%1
+            pushad
+            println SSE_Msg.%+%1%+_Available
+            
+            popad
+        .no%+%1%+:
 %endmacro
 
 OS_Begin:
     call clearScreenOS
 
-    mov esi,successMsg
-    mov ecx,11
-    call printStringOS
-    call endLineOS
-    mov esi,LogoInLines.line0
-    call printC_StringOS
-    call endLineOS
-    mov esi,LogoInLines.line1
-    call printC_StringOS
-    call endLineOS
-    mov esi,LogoInLines.line2
-    call printC_StringOS
-    call endLineOS
-    mov esi,LogoInLines.line3
-    call printC_StringOS
-    call endLineOS
+    println successMsg
+    println LogoInLines.line0
+    println LogoInLines.line1
+    println LogoInLines.line2
+    println LogoInLines.line3
 
     call endLineOS
 
-    mov esi,SIMD_Check
-    call printC_StringOS
-    call endLineOS
+    println SIMD_Check
 
     CheckingSIMD_Extensions:
         mov eax,0x1
         cpuid
 
-        ; ---- SSE ----
-            test edx, SSE_Available
-            jz .noSSE
-            pushad
-            println SSE_Msg.SSE_Available
-            
-            popad
-        .noSSE:
+        checkSSE_Extension SSE,edx
 
-        ; ---- SSE2 ----
-            test edx, SSE2_Available
-            jz .noSSE2
-            pushad
-            println SSE_Msg.SSE2_Available
-            
-            popad
-        .noSSE2:
-
-        ; ---- SSE3 ----
-            test ecx, SSE3_Available
-            jz .noSSE3
-            pushad
-            println SSE_Msg.SSE3_Available
-            
-            popad
-        .noSSE3:
-
-        ; ---- SSSE3 ----
-            test ecx, SSSE3_Available
-            jz .noSSSE3
-            pushad
-            println SSE_Msg.SSSE3_Available
-            
-            popad
-        .noSSSE3:
-
-        ; ---- SSE4.1 ----
-            test ecx, SSE4v1_Available
-            jz .noSSE4v1
-            pushad
-            println SSE_Msg.SSE4v1_Available
-            
-            popad
-        .noSSE4v1:
-
-        ; ---- SSE4.2 ----
-            test ecx, SSE4v2_Available
-            jz .noSSE4v2
-            pushad
-            println SSE_Msg.SSE4v2_Available
-            
-            popad
-        .noSSE4v2:
+        checkSSE_Extension SSE2,edx
+        checkSSE_Extension SSE3,ecx
+        checkSSE_Extension SSSE3,ecx
+        checkSSE_Extension SSE4v1,ecx
+        checkSSE_Extension SSE4v2,ecx
 
     checkEnd:
-
 
     println initInterruptHandlingMsg
 
