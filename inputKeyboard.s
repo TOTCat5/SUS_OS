@@ -9,11 +9,10 @@ waitPS2_InputClear:
 
 
 
-
 handlePS2KeyboardInt:
-    mov edx,[cursorPos]
-    add edx,edx
-    add edx,VGA_TerminalBuffer
+    mov dword edi,[cursorPos]
+    add edi,edi
+    add edi,VGA_TerminalBuffer
 
     xor eax,eax
     inb 0x60,al
@@ -22,37 +21,34 @@ handlePS2KeyboardInt:
     ; mov bl,[eax+conversionState]
     ; mov byte [edx],al
     ; mov byte [edx+1],0x07
-    mov bl,[conversionState+2]
-    mov [edx],bl
+    ; mov bl,[conversionState+2]
+    ; mov [edx],bl
 
-    inc dword [cursorPos]
+    ; inc dword [cursorPos]
+    ; mov bx,[cursorPos]
+    ; call setCursorPos
+
+    mov ebx,[eax+convStage]
+    mov al,bl
+    call putChar
+
     mov bx,[cursorPos]
     call setCursorPos
 
-    ; println keyBoardIntMsg
+
+
 
     .done:
 
     ret
 
-conversionState:
-    db 0
-    db 27
-    db "1234567890-="
-    db 8
-    db 9
-    db "qwertyuiop[]"
-    db 13
-    db 0
-    db "asdfghjkl;'`"
-    db 0
-    db "\zxcvbnm,./"
-    db 0
-    db "*"
-    db 0
-    db " "
 
-conversionStateLen: dd conversionState-$
 
 keyBoardIntMsg: db "a keyboard interrupt happened",0
-    
+
+
+convStage:
+    db "0 1234567890-=0"
+    db "0qwertyuiop[]",13
+    db "0asdfghjkl;'`"
+    db "0\zxcvbnm,./0"

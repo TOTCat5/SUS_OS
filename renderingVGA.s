@@ -31,28 +31,43 @@ setCursorPos:
 ; %endmacro
 
 
+; uses al
+; modifiy edi
+putChar:
+
+    cmp al,13
+    jnz .returnLine
+        call endLineOS
+        ret
+    .returnLine:
+        mov dword edi,[cursorPos]
+        add edi,edi
+        add edi,VGA_TerminalBuffer
+
+        mov [edi],al
+
+        inc dword [cursorPos]
+        mov edi,[cursorPos]
+        cmp edi,VGA_TerminalArea
+        jl .scroll 
+            call scrollScreenOS
+        .scroll:
+        
+    ret
+
 ; esi as string and ecx as size
-; modifies edi,esi,al and ecx
+; modifies edi,esi,al,edx and ecx
 printStringOS:
-    mov dword edi,[cursorPos]
-    add edi,edx
-    add edi,VGA_TerminalBuffer
-
-    add dword [cursorPos],ecx
-
     .next:
         test ecx,ecx
         jz .done
-        mov al,[esi]
-        mov [edi],al
-        mov byte [edi+1],VGA_ColorWhiteOnBlack
+        mov al,[ecx]
+        call putChar
 
-        add edi,2
         inc esi
         dec ecx
         jmp .next
     .done:
-        mov dword ebx,[cursorPos]
         call setCursorPos
         ret
 
@@ -68,15 +83,12 @@ printC_StringOS:
         test al,al
         jz .done
 
-        mov [edi],al
-        mov byte [edi+1],VGA_ColorWhiteOnBlack
+        call putChar
 
-        add edi,2
         inc esi
-        inc dword [cursorPos]
         jmp .next
     .done:
-        mov word bx,[cursorPos]
+        mov ebx,[cursorPos]
         call setCursorPos
         ret
 
@@ -93,36 +105,46 @@ endLineOS:
 
     mov [cursorPos],eax
 
-    mov bx,ax
-    call setCursorPos
-    ret
-
-carryReturnLineOS:
-    mov eax,[cursorPos]
-    xor edx,edx
-    mov ecx,VGA_TerminalSizeX
-    div ecx              ; eax=cursorPos/80
-    mul ecx              ; eax=eax*80
-
-    mov [cursorPos],eax
+    cmp eax,VGA_TerminalArea
+    jl .scroll 
+        call scrollScreenOS
+    .scroll:
 
     mov bx,ax
     call setCursorPos
     ret
+
 
 ; modifies eax, edi and ecx
 clearScreenOS:
     mov eax,0x0f200f20          ; 2x ' ' + white on black
     mov edi,VGA_TerminalBuffer
-    mov ecx,VGA_TerminalArea/4
+    mov ecx,VGA_TerminalArea/2
     rep stosd
 
     xor ebx,ebx
-    mov dword [cursorPos],ebx
+    mov [cursorPos],ebx
     call setCursorPos
     ret
 
-scrollScreen:
-    
+
+
+scrollScreenOS:
+    mov edi,VGA_TerminalBuffer
+    mov esi,VGA_TerminalBuffer+VGA_TerminalSizeX*2
+    mov ecx,(VGA_TerminalArea-VGA_TerminalSizeX)/2
+    rep movsd
+
+    mov eax,0x0f200f20
+    mov edi,VGA_TerminalEndBuffer-VGA_TerminalSizeX*2
+    mov ecx,VGA_TerminalSizeX*2
+    rep stosd
+
+
+    mov ebx,[cursorPos]
+    sub ebx,VGA_TerminalSizeX
+    mov [cursorPos],ebx
+    call setCursorPos
+
     ret
 
