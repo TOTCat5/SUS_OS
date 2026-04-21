@@ -1,1 +1,1 @@
-SUS_OS or Stupid and Utterly Shitty Operating System is a fully assembly operating system made to be quick
+SUS_OS or Stupid and Utterly Shitty Operating System is a fully assembly operating system made ~~to be quick~~ badly made as an experiment
