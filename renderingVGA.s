@@ -48,7 +48,7 @@ putChar:
 
         inc dword [cursorPos]
         mov edi,[cursorPos]
-        cmp edi,VGA_TerminalArea
+        cmp edi,VGA_TerminalArea-VGA_TerminalSizeX*5
         jl .scroll 
             call scrollScreenOS
         .scroll:
@@ -74,9 +74,6 @@ printStringOS:
 ; esi as string
 ; modifies esi,edi and al
 printC_StringOS:
-    mov dword edi,[cursorPos]
-    add edi,edi
-    add edi,VGA_TerminalBuffer
 
     .next:
         mov al,[esi]
@@ -105,7 +102,7 @@ endLineOS:
 
     mov [cursorPos],eax
 
-    cmp eax,VGA_TerminalArea
+    cmp eax,VGA_TerminalArea-VGA_TerminalSizeX*5
     jl .scroll 
         call scrollScreenOS
     .scroll:

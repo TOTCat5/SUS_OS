@@ -13,6 +13,8 @@ start:
     mov [bootDrive], dl
 
 
+    ; mov ax,12h
+    ; int 10h
 
     ; Load other sectors in Memory to run the kernel
     mov ax, 0x1000

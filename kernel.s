@@ -81,6 +81,7 @@ OS_Begin:
     call activateSSE
     println SSE_FinishActivateMsg
 
+
     OS_Loop:
         hlt
 
@@ -104,7 +105,6 @@ LogoAsMsg:
     db "\___\| || |\____\    | |_| |\___\",13
     db "\___/\____/\____/=====\___/ \___/",0
 
-logoMsg: db ""
 
 initInterruptHandlingMsg: db "Initializing The Interrupt Handling",0
 finishInterruptHandling: db "Finishing The Interrupt Handling",0
