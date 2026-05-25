@@ -1,5 +1,5 @@
 [BITS 32]
-org 0x10000
+[org 0x10000]
 
 ; code
 start:

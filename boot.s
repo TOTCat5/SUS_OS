@@ -1,5 +1,5 @@
-[org 0x7C00]
 [BITS 16]
+[org 0x7C00]
 
 start:
     cli
