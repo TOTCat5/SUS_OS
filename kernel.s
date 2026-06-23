@@ -14,7 +14,7 @@ start:
     mov esp, 0x90000
 
 
-    jmp OS_Begin
+    jmp "main"
 
 %macro println 1
     mov esi,%1
@@ -40,7 +40,7 @@ start:
         .no%+%1%+:
 %endmacro
 
-OS_Begin:
+"main":
     call clearScreenOS
 
     println successMsg

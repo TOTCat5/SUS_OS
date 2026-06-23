@@ -103,9 +103,10 @@ printStringReal:
     endPrintStringRealFunction:
     ret
 
-    ;End Of The Real Mode Stuff
-    times 510-($-$$) db 0
-    dw 0xaa55
+
+;End Of The Real Mode Stuff
+times 510-($-$$) db 0
+dw 0xaa55
 
 
     
